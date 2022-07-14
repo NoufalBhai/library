@@ -11,6 +11,9 @@ router = APIRouter()
 
 @router.post("/", response_model=schema.ReturnUser)
 def add_user(user: schema.RegisterUser):
+    """
+    This Function Will Create a new user
+    """
     query = """
     INSERT INTO library.users(name, phone, email, password)
     VALUES (%s, %s, %s, %s) RETURNING *;
