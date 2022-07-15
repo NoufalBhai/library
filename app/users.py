@@ -2,29 +2,29 @@ from fastapi import APIRouter, Response, status
 from fastapi.responses import JSONResponse
 
 from app.crud import users
-from app import schema
+from app.schemas import users as scuser
 
 router = APIRouter()
 
 
-@router.post("/", response_model=schema.ReturnUser)
-def add_user(user: schema.RegisterUser):
+@router.post("/", response_model=scuser.ReturnUser)
+def add_user(user: scuser.RegisterUser):
     """
     This Function Will Create a new user
     """
     return users.create(user)
 
 
-@router.get("/", response_model=list[schema.ReturnUser])
+@router.get("/", response_model=list[scuser.ReturnUser])
 def get_all_users(limit: int = 3, offset: int = 0):
     return users.get_all(offset, limit)
 
 
 @router.get(
     "/{id}",
-    response_model=schema.ReturnUser,
+    response_model=scuser.ReturnUser,
     responses={
-        200: {"model": schema.RegisterUser},
+        200: {"model": scuser.RegisterUser},
         404: {"model": dict[str, str]},
     },
 )
@@ -48,8 +48,8 @@ def delete_user(id: int):
     return None
 
 
-@router.put("/{id}", response_model=schema.ReturnUser)
-def update_user(id: int, user: schema.BaseUser):
+@router.put("/{id}", response_model=scuser.ReturnUser)
+def update_user(id: int, user: scuser.BaseUser):
     user_in_db = users.get_one(id)
     if not user_in_db:
         return JSONResponse(
