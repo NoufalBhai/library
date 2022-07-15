@@ -94,51 +94,34 @@ def delete_user(id: int):
     params = (id,)
     cursor = conn.cursor(cursor_factory=DictCursor)
     cursor.execute(query, params)
+    conn.commit()
     cursor.close()
     return None
 
-
-fake_database = {
-    1: {"id": 1, "name": "User 1", "email": "user1@email.com"},
-    2: {"id": 2, "name": "User 2", "email": "user2@email.com"},
-    3: {"id": 3, "name": "User 3", "email": "user3@email.com"},
-    4: {"id": 4, "name": "User 4", "email": "user4@email.com"},
-    5: {"id": 5, "name": "User 5", "email": "user5@email.com"},
-    6: {"id": 6, "name": "User 6", "email": "user6@email.com"},
-}
-
-
-class UserID(BaseModel):
-    id: int
-
-
-class BaseUser(BaseModel):
-    name: str
-    email: EmailStr
-
-
-class RegisterUser(BaseUser):
-    pass
-
-
-class UpdateUser(BaseUser):
-    pass
-
-
-class ReturnUser(BaseUser, UserID):
-    pass
-
-
-@router.put("/{id}", response_model=ReturnUser)
-def update_user(id: int, change_user: UpdateUser):
-    try:
-        user = fake_database[id]
-    except KeyError:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User Not Found"
+@router.put("/{id}", response_model=schema.ReturnUser)
+def update_user(id: int, user: schema.BaseUser):
+    query = "SELECT * FROM library.users WHERE id = %s"
+    params = (id,)
+    cursor = conn.cursor(cursor_factory=DictCursor)
+    cursor.execute(query, params)
+    user_in_db = cursor.fetchone()
+    if not user_in_db:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND, content={"message": "No User Found"}
         )
 
-    user.update(change_user.dict())
-    fake_database[id] = user
+    query = """
+    UPDATE library.users 
+    SET name=%s, 
+        email=%s, 
+        phone=%s 
+    WHERE id=%s RETURNING *;
+    """
+    params = (user.name, user.email, user.phone, id)
+    
+    cursor.execute(query, params)
+    changed_user_in_db = cursor.fetchone()
+    conn.commit()
+    cursor.close()
+    return dict(changed_user_in_db)
 
-    return user
