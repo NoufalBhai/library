@@ -7,7 +7,7 @@ from psycopg2.errors import UniqueViolation
 
 
 from app.db import conn
-from app.schema import RegisterUser, BaseUser
+from app.schemas.users import RegisterUser, BaseUser
 
 context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
