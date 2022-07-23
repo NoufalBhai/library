@@ -14,5 +14,6 @@ class BaseUser(BaseModel):
 class ReturnUser(BaseUser, UserID):
     pass
 
+
 class RegisterUser(BaseUser):
     password: str

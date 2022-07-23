@@ -1,13 +1,11 @@
 from fastapi import status
 from fastapi.responses import JSONResponse
 from passlib.context import CryptContext
-from psycopg2.extras import DictCursor
 from psycopg2.errors import UniqueViolation
-
-
+from psycopg2.extras import DictCursor
 
 from app.db import conn
-from app.schemas.users import RegisterUser, BaseUser
+from app.schemas.users import BaseUser, RegisterUser
 
 context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -37,6 +35,7 @@ def create(user: RegisterUser):
         cursor.close()
     return dict(new_user)
 
+
 def get_all(offset: int, limit: int):
     query = "SELECT * FROM library.users OFFSET %s LIMIT %s;"
     params = (offset, limit)
@@ -45,6 +44,7 @@ def get_all(offset: int, limit: int):
     all_users = cursor.fetchall()
     cursor.close()
     return [dict(user) for user in all_users]
+
 
 def get_one(id: int):
     query = "SELECT * FROM library.users WHERE id = %s"
@@ -55,6 +55,7 @@ def get_one(id: int):
     cursor.close()
     return user
 
+
 def delete(id: int):
     query = "DELETE FROM library.users WHERE id = %s"
     params = (id,)
@@ -62,7 +63,8 @@ def delete(id: int):
     cursor.execute(query, params)
     conn.commit()
     cursor.close()
-    
+
+
 def update(user: BaseUser):
     query = """
     UPDATE library.users 
