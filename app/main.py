@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 
-from app import books, users
+from app.api import author, books, users
 
 app = FastAPI(title="Library Management")
 
 
 app.include_router(users.router, prefix="/user", tags=["User"])
 app.include_router(books.router, prefix="/book", tags=["Book"])
+app.include_router(author.router, prefix="/author", tags=["Author"])
 
 
 @app.get("/")

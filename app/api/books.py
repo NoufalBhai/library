@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, Response, status
 from psycopg2.extras import DictCursor
 
+from app.crud import books as bks
 from app.db import conn
 from app.schemas import books
-from app.crud import books as bks
 
 router = APIRouter()
 
@@ -54,5 +54,5 @@ def delete(id: int):
     old_book = bks.get_by_id(id)
     if not old_book:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Book not Found")
-    
+
     return bks.delete()

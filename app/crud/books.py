@@ -4,6 +4,7 @@ from psycopg2.extras import DictCursor
 from app.db import conn
 from app.schemas import books
 
+
 def create(book: books.InsertBook):
     query = """
     Insert into library.books(title, pages, author_id, genre, copies)
@@ -23,6 +24,7 @@ def create(book: books.InsertBook):
         cursor.close()
     return new_book
 
+
 def get_by_id(id: int):
     query = "SELECT * FROM library.books WHERE id = %s"
     params = (id,)
@@ -32,6 +34,7 @@ def get_by_id(id: int):
     cursor.close()
     return book
 
+
 def get_all_books():
     query = """SELECT * FROM library.books"""
     cursor = conn.cursor(cursor_factory=DictCursor)
@@ -40,6 +43,7 @@ def get_all_books():
     cursor.close()
     return [dict(book) for book in all_books]
 
+
 def delete(id):
     query = "DELETE FROM library.books WHERE id = %s"
     params = (id,)
@@ -47,7 +51,8 @@ def delete(id):
     cursor.execute(query, params)
     conn.commit()
     cursor.close()
-    
+
+
 def update(id: int, book: books.UpdateBook):
     query = """
     UPDATE library.books 
