@@ -17,3 +17,8 @@ class ReturnUser(BaseUser, UserID):
 
 class RegisterUser(BaseUser):
     password: str
+    
+
+class Login(BaseModel):
+    email: EmailStr
+    password: str

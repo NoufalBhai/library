@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from passlib.context import CryptContext
 from psycopg2.errors import UniqueViolation
 from psycopg2.extras import DictCursor
+from pydantic import EmailStr
 
 from app.db import conn
 from app.schemas.users import BaseUser, RegisterUser
@@ -80,3 +81,12 @@ def update(user: BaseUser):
     conn.commit()
     cursor.close()
     return changed_user_in_db
+
+def get_by_email(email: EmailStr):
+    query = "SELECT * FROM library.users WHERE email = %s"
+    params = (email,)
+    cursor = conn.cursor(cursor_factory=DictCursor)
+    cursor.execute(query, params)
+    user = cursor.fetchone()
+    cursor.close()
+    return user
