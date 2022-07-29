@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api import author, books, users, auth
+from app.api import auth, author, books, users
 
 app = FastAPI(title="Library Management")
 

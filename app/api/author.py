@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from app.crud import author as athr
 from app.schemas import author
+from app.utils.dep import get_librarian
 
 router = APIRouter()
 
@@ -11,7 +12,7 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
     response_model=author.ReturnAuthor,
 )
-def create_author(author: author.Author):
+def create_author(author: author.Author, librarian=Depends(get_librarian)):
     new_author = athr.create(author)
     return dict(new_author)
 
@@ -33,7 +34,7 @@ def get_author(id: int):
 
 
 @router.put("/{id}", response_model=author.ReturnAuthor)
-def update_author(id: int, author_in: author.Author):
+def update_author(id: int, author_in: author.Author, librarian=Depends(get_librarian)):
     author_in_db = athr.get(id)
     if not author_in_db:
         raise HTTPException(
@@ -44,7 +45,7 @@ def update_author(id: int, author_in: author.Author):
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
-def delete_author(id: int):
+def delete_author(id: int, librarian=Depends(get_librarian)):
     author_in_db = athr.get(id)
     if not author_in_db:
         raise HTTPException(

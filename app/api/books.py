@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from psycopg2.extras import DictCursor
 
 from app.crud import books as bks
 from app.db import conn
 from app.schemas import books
+from app.utils.dep import get_librarian
 
 router = APIRouter()
 
@@ -14,13 +15,13 @@ def get_all_books():
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=books.ReturnBook)
-def add_book(book: books.InsertBook):
+def add_book(book: books.InsertBook, _=Depends(get_librarian)):
     new_book = bks.create(book)
     return dict(new_book)
 
 
 @router.put("/{id}")
-def update_books(id: int, updatebook: books.UpdateBook):
+def update_books(id: int, updatebook: books.UpdateBook, _=Depends(get_librarian)):
     old_book = bks.get_by_id(id)
     if not old_book:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Book not Found")
@@ -50,7 +51,7 @@ def get_one(id: int):
 
 
 @router.delete("/{id}", response_class=Response, status_code=status.HTTP_204_NO_CONTENT)
-def delete(id: int):
+def delete(id: int, _=Depends(get_librarian)):
     old_book = bks.get_by_id(id)
     if not old_book:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Book not Found")

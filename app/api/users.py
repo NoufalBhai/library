@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Response, status
+from fastapi import APIRouter, Depends, Response, status
 from fastapi.responses import JSONResponse
 
 from app.crud import users
 from app.schemas import users as scuser
+from app.utils.dep import get_user
 
 router = APIRouter()
 
@@ -28,7 +29,7 @@ def get_all_users(limit: int = 3, offset: int = 0):
         404: {"model": dict[str, str]},
     },
 )
-def get_user(id: int):
+def get_user_by_id(id: int):
     user = users.get_one(id)
     if not user:
         return JSONResponse(
@@ -38,7 +39,7 @@ def get_user(id: int):
 
 
 @router.delete("/{id}", status_code=204, response_class=Response)
-def delete_user(id: int):
+def delete_user(id: int, _=Depends(get_user)):
     user = users.get_one(id)
     if not user:
         return JSONResponse(
@@ -49,7 +50,7 @@ def delete_user(id: int):
 
 
 @router.put("/{id}", response_model=scuser.ReturnUser)
-def update_user(id: int, user: scuser.BaseUser):
+def update_user(id: int, user: scuser.BaseUser, _=Depends(get_user)):
     user_in_db = users.get_one(id)
     if not user_in_db:
         return JSONResponse(

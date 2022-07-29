@@ -82,6 +82,7 @@ def update(user: BaseUser):
     cursor.close()
     return changed_user_in_db
 
+
 def get_by_email(email: EmailStr):
     query = "SELECT * FROM library.users WHERE email = %s"
     params = (email,)

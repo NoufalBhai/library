@@ -1,4 +1,5 @@
 import psycopg2
+
 from app.utils.config import settings
 
 conn = psycopg2.connect(
@@ -6,5 +7,5 @@ conn = psycopg2.connect(
     port=settings.DB_PORT,
     user=settings.DB_USER,
     password=settings.DB_PWD,
-    dbname=settings.DB_NAME
+    dbname=settings.DB_NAME,
 )
