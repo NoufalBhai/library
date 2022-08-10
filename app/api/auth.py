@@ -1,10 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi import APIRouter, HTTPException, status
 from passlib.context import CryptContext
 
 from app.crud import users as cu_user
 from app.schemas import users
-from app.utils.auth import generate_jwt, parse_jwt
+from app.utils.auth import generate_jwt
 
 router = APIRouter()
 
@@ -27,14 +26,3 @@ def login(user: users.Login):
     token = generate_jwt(user_in_db.get("id"), user_in_db.get("role"))
     return {"message": "User Login Success", "access_token": token}
 
-
-# def get_user_id(token: HTTPAuthorizationCredentials=Depends(HTTPBearer())) -> str:
-#     return parse_jwt(token.credentials)
-
-# @router.get("/only-for-logged-in")
-# def secret_data(user_id: int = Depends(get_user_id)):
-#     return {
-#         "message": "It's only for logged in Users",
-#         "data": "This is a secret",
-#         "user_id": user_id
-#     }

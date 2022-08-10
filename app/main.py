@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api import auth, author, books, users
+from app.api import auth, author, books, users, assign_book
 
 app = FastAPI(title="Library Management")
 
@@ -9,6 +9,7 @@ app.include_router(users.router, prefix="/user", tags=["User"])
 app.include_router(books.router, prefix="/book", tags=["Book"])
 app.include_router(author.router, prefix="/author", tags=["Author"])
 app.include_router(auth.router, prefix="/auth", tags=["Authenticaton"])
+app.include_router(assign_book.router, tags=["Book Operations"])
 
 
 @app.get("/")

@@ -18,7 +18,9 @@ def add_user(user: scuser.RegisterUser):
 
 @router.get("/", response_model=list[scuser.ReturnUser])
 def get_all_users(limit: int = 3, offset: int = 0):
-    return users.get_all(offset, limit)
+    all_users = users.get_all(offset, limit)
+    print(all_users)
+    return all_users
 
 
 @router.get(
